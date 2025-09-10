@@ -3,8 +3,15 @@
 #       usuarios: mapeia login -> dados do usuário
 #      cadastrados: conjunto de logins aprovados
 #     nao_cadastrados: conjuntos de logins pendentes/rejeitados
+from dataclasses import dataclas, field
 
-
+@dataclass
+class conta: 
+    numero: str
+    pin_hash: str
+    saldo: float = 0.0
+    historico: list = field(default_factory= list)
+    
 class caixa_eletronico:
     def __init__(self, contas: dict, usuarios: set,  cadastrados: dict, nao_cadastrados: set):
         self.contas = contas
@@ -76,3 +83,5 @@ def main():
             print("Opção inválida!  /n")
 if __name__ == "__main__":
     main()
+
+
