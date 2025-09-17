@@ -1,0 +1,4 @@
+Add: Função de novos usuários = criação de realização de cadastros
+Atualmente tem 5 opções, tentar melhorar e adicionar até 10
+
+Colocar cor no Terminal
