@@ -2,150 +2,153 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter.ttk as ttk
 
-# Dados simulados
-contas = {
-    "546421": {'pin': '751312', 'saldo': 2000.0},
-    "120983": {'pin': '566312', 'saldo': 50000.0},
-    "052.731.071-99": {'pin': '999999', 'saldo': 1000.0}  # Conta de destino adicionada
+# Simulated account data
+accounts = {
+    "546421": {'pin': '751312', 'balance': 2000.0},
+    "120983": {'pin': '566312', 'balance': 50000.0},
+    "052.731.071-99": {'pin': '999999', 'balance': 1000.0}  # Destination account
 }
 
-# Autenticação
-def autenticar():
-    numero = entry_conta.get()
+# Authentication
+def authenticate():
+    account_number = entry_account.get()
     pin = entry_pin.get()
-    dados = contas.get(numero)
-    if dados and dados['pin'] == pin:
-        messagebox.showinfo("Sucesso", "Logado com sucesso 😎")
-        abrir_menu(numero)
+
+    data = accounts.get(account_number)
+    if data and data['pin'] == pin:
+        messagebox.showinfo("Success", "Logged in successfully 😎")
+        open_menu(account_number)
     else:
-        messagebox.showerror("Erro", "Conta ou PIN incorretos 😞")
+        messagebox.showerror("Error", "Incorrect account or PIN 😞")
 
-# Menu com Abas
-def abrir_menu(conta):
-    janela_menu = Toplevel(root)
-    janela_menu.title("Menu do Caixa")
-    janela_menu.geometry("450x300")
+# Main Menu
+def open_menu(account):
+    menu_window = Toplevel(root)
+    menu_window.title("ATM Menu")
+    menu_window.geometry("450x300")
 
-    notebook = ttk.Notebook(janela_menu)
+    notebook = ttk.Notebook(menu_window)
     notebook.pack(expand=True, fill='both')
 
-    # Aba Saldo
-    aba_saldo = Frame(notebook)
-    notebook.add(aba_saldo, text="Saldo")
+    # Balance Tab
+    tab_balance = Frame(notebook)
+    notebook.add(tab_balance, text="Balance")
 
-    def ver_saldo():
-        saldo = contas[conta]['saldo']
-        messagebox.showinfo("Saldo", f"Saldo atual: R${saldo:.2f}")
+    def view_balance():
+        balance = accounts[account]['balance']
+        messagebox.showinfo("Balance", f"Current balance: R${balance:.2f}")
 
-    Button(aba_saldo, text="Ver Saldo", command=ver_saldo).pack(pady=20)
+    Button(tab_balance, text="View Balance", command=view_balance).pack(pady=20)
 
-    # Aba Depósito
-    aba_deposito = Frame(notebook)
-    notebook.add(aba_deposito, text="Depósito")
+    # Deposit Tab
+    tab_deposit = Frame(notebook)
+    notebook.add(tab_deposit, text="Deposit")
 
-    Label(aba_deposito, text="Valor do Depósito:").pack()
-    entry_deposito = Entry(aba_deposito)
-    entry_deposito.pack()
+    Label(tab_deposit, text="Deposit Amount:").pack()
+    entry_deposit = Entry(tab_deposit)
+    entry_deposit.pack()
 
-    def depositar():
-        valor = float(entry_deposito.get())
-        contas[conta]['saldo'] += valor
-        messagebox.showinfo("Depósito", "Depósito realizado com sucesso!")
+    def deposit():
+        amount = float(entry_deposit.get())
+        accounts[account]['balance'] += amount
+        messagebox.showinfo("Deposit", "Deposit successful!")
 
-    Button(aba_deposito, text="Depositar", command=depositar).pack(pady=10)
+    Button(tab_deposit, text="Deposit", command=deposit).pack(pady=10)
 
-    # Aba Saque
-    aba_saque = Frame(notebook)
-    notebook.add(aba_saque, text="Saque")
+    # Withdraw Tab
+    tab_withdraw = Frame(notebook)
+    notebook.add(tab_withdraw, text="Withdraw")
 
-    Label(aba_saque, text="Valor do Saque:").pack()
-    entry_saque = Entry(aba_saque)
-    entry_saque.pack()
+    Label(tab_withdraw, text="Withdraw Amount:").pack()
+    entry_withdraw = Entry(tab_withdraw)
+    entry_withdraw.pack()
 
-    def sacar():
-        valor = float(entry_saque.get())
-        if valor <= contas[conta]['saldo']:
-            contas[conta]['saldo'] -= valor
-            messagebox.showinfo("Saque", "Saque realizado com sucesso 😎")
-        else:
-            messagebox.showerror("Erro", "Saldo insuficiente 😞")
+    def withdraw():
+        amount = float(entry_withdraw.get())
+        accounts[account]['balance'] -= amount  # Allows negative balance
+        messagebox.showinfo("Withdraw", "Withdrawal successful 😎")
 
-    Button(aba_saque, text="Sacar", command=sacar).pack(pady=10)
+    Button(tab_withdraw, text="Withdraw", command=withdraw).pack(pady=10)
 
-    # Aba Pix
-    aba_pix = Frame(notebook)
-    notebook.add(aba_pix, text="Pix")
+    # Pix Tab
+    tab_pix = Frame(notebook)
+    notebook.add(tab_pix, text="Pix")
 
-    Label(aba_pix, text="Conta destino:").pack()
-    entry_destino = Entry(aba_pix)
-    entry_destino.pack()
-    entry_destino.insert(0, "052.731.071-99")  # Preenche automaticamente com a conta de destino
+    Label(tab_pix, text="Destination Account:").pack()
+    entry_dest = Entry(tab_pix)
+    entry_dest.pack()
+    entry_dest.insert(0, "052.731.071-99")
 
-    Label(aba_pix, text="Valor do Pix:").pack()
-    entry_valor_pix = Entry(aba_pix)
-    entry_valor_pix.pack()
+    Label(tab_pix, text="Pix Amount:").pack()
+    entry_pix_amount = Entry(tab_pix)
+    entry_pix_amount.pack()
 
-    def pix():
-        destino = entry_destino.get()
-        valor = float(entry_valor_pix.get())
-        if destino not in contas:
-            messagebox.showerror("Erro", "Conta de destino não encontrada 😞")
+    def send_pix():
+        dest = entry_dest.get()
+        amount = float(entry_pix_amount.get())
+        if dest not in accounts:
+            messagebox.showerror("Error", "Destination account not found 😞")
             return
-        if valor <= contas[conta]['saldo']:
-            contas[conta]['saldo'] -= valor
-            contas[destino]['saldo'] += valor
-            messagebox.showinfo("Pix", f"Pix de R${valor:.2f} enviado para {destino} 😎")
+        accounts[account]['balance'] -= amount  # Allows overdraft
+        accounts[dest]['balance'] += amount
+        messagebox.showinfo("Pix", f"Pix of R${amount:.2f} sent to {dest} 😎")
+
+    Button(tab_pix, text="Send Pix", command=send_pix).pack(pady=10)
+
+    # Credit Card Tab
+    tab_credit = Frame(notebook)
+    notebook.add(tab_credit, text="Credit Card")
+
+    Label(tab_credit, text="Card Limit:").pack()
+    entry_limit = Entry(tab_credit)
+    entry_limit.pack()
+
+    Label(tab_credit, text="Send Amount via Card:").pack()
+    entry_card_send = Entry(tab_credit)
+    entry_card_send.pack()
+
+    def send_with_card():
+        limit = float(entry_limit.get())
+        amount = float(entry_card_send.get())
+        if amount <= limit:
+            messagebox.showinfo("Credit", f"R${amount:.2f} sent using credit card 😎")
         else:
-            messagebox.showerror("Erro", "Saldo insuficiente 😞")
+            messagebox.showerror("Error", "Amount exceeds card limit 😞")
 
-    Button(aba_pix, text="Enviar Pix", command=pix).pack(pady=10)
+    Button(tab_credit, text="Send via Card", command=send_with_card).pack(pady=10)
 
-    # Aba Cartão de Crédito
-    aba_credito = Frame(notebook)
-    notebook.add(aba_credito, text="Cartão de Crédito")
-
-    Label(aba_credito, text="Limite do Cartão:").pack()
-    entry_limite = Entry(aba_credito)
-    entry_limite.pack()
-
-    def cartao_credito():
-        limite = float(entry_limite.get())
-        messagebox.showinfo("Crédito", f"Cartão com limite de R${limite:.2f} ativado!")
-
-    Button(aba_credito, text="Ativar Cartão", command=cartao_credito).pack(pady=10)
-
-# Tela de carregamento
-def tela_carregamento():
+# Loading Screen
+def loading_screen():
     loading = Toplevel()
-    loading.title("Carregando...")
+    loading.title("Loading...")
     loading.geometry("300x150")
-    Label(loading, text="Iniciando sistema...", font=("Arial", 12)).pack(pady=10)
+    Label(loading, text="Starting system...", font=("Arial", 12)).pack(pady=10)
     progress = ttk.Progressbar(loading, orient=HORIZONTAL, length=250, mode='determinate')
     progress.pack(pady=10)
 
-    def carregar():
+    def load():
         for i in range(101):
             progress['value'] = i
             loading.update_idletasks()
             loading.after(15)
         loading.destroy()
 
-    Button(loading, text="Iniciar", command=carregar).pack(pady=10)
+    Button(loading, text="Start", command=load).pack(pady=10)
 
-# Janela principal
+# Main Window
 root = Tk()
-root.title("Caixa Eletrônico")
+root.title("ATM System")
 root.geometry("400x250")
 
-Label(root, text="Número da Conta:").pack()
-entry_conta = Entry(root)
-entry_conta.pack()
+Label(root, text="Account Number:").pack()
+entry_account = Entry(root)
+entry_account.pack()
 
 Label(root, text="PIN:").pack()
 entry_pin = Entry(root, show="*")
 entry_pin.pack()
 
-Button(root, text="Entrar", command=autenticar).pack(pady=10)
-Button(root, text="Tela de Carregamento", command=tela_carregamento).pack(pady=5)
+Button(root, text="Login", command=authenticate).pack(pady=10)
+Button(root, text="Loading Screen", command=loading_screen).pack(pady=5)
 
 root.mainloop()
